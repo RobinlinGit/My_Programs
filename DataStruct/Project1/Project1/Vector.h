@@ -33,7 +33,7 @@ public:
 	// Need some rubust , all the elements are set as v
 	Vector( T const* A, Rank n )	{ copyFrom( A, 0, n );}
 	Vector( T const* A, Rank lo, Rank hi )	{ copyFrom( A, lo, hi ); }
-	Vector( Vector<T> const& V £© { copyFrom£¨ V.element, 0, V._size ); }	
+	Vector( Vector<T> const& V ) { copyFrom( V.element, 0, V._size ); }	
 	Vector( Vector<T> const& V, Rank lo, Rank hi )	{ copyForm( V.element, lo, hi ); }
 	//copy Struction function
 
@@ -49,7 +49,7 @@ public:
 	//Some API only for read
 
 	T& operator[] ( Rank r ) { return element[r]; }
-	Vector<T>& operator = ( Vector<T>& const );
+	Vector<T>& operator = ( Vector<T> const& );
 	T remove( Rank r );
 	int remove( Rank lo, Rank hi );
 	Rank insert( T const& e, Rank r );
@@ -73,5 +73,5 @@ public:
 
 
 
-};
+
 
