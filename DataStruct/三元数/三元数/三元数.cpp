@@ -4,7 +4,7 @@
 	*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-
+using namespace std;
 void exchange(int* a, int* b){
 	//printf("%d %d\n", *a, *b);
 	int temp = *a;
@@ -47,47 +47,68 @@ int bioSearch(int *a, int lo, int hi, int value){//suppose the input legal
 	else return mi-1;
 }// return the biggest index which a[find] <= value
 
+
+void MoveIndexLow(int* A, int i, int j, int &k, int right, int bound){
+	while( A[i]+A[j]+A[k-1] >= bound && k-1>j ) k--; // 如果k-1满足条件，移动
+}
+void MoveIndexHigh(int* A, int i, int j, int &k, int right, int bound){
+	while( A[i]+A[j]+A[k] > bound && k>j  ) k--; //移动到小等于的最大索引，且不大于j
+}
+
+bool indexRight(int* A, int i, int j, int k1, int k2, int min, int max){
+	return ( (A[i]+A[j]+A[k1] >= min) && (A[i]+A[j]+A[k2]<=max) );
+}
+
 int main(){
-	long total = 0;
 	int length = 0, max = 0, min = 0;
 	scanf("%d %d %d", &length, &min, &max );
 	int *A = new int[length];
 	for( int i = 0; i <= length-1; i++ ){
 		scanf("%d",A+i);
 	}//Init All
+	//for( int i = 0; i <= length-1; i++ )cout<<A[i]<<endl;  
+	//getchar();
 	quickSort(A,0,length-1);//quickSort
-	//for( int i = 0; i <= length-1; i++ )printf("%d ",*(A+i));
-	/*int k1 = 0, k2 = 0;
-	for( int i = 0; i <= length - 3; i++ ){
-		for( int j = i+1; j <= length -2 ;	j++ ){
-			if( A[i]+A[j]+A[j+1] > max || A[i]+A[j]+A[length-1] < min ){
-				//printf("%d %d %d %d can't\n",i,j,A[i]+A[j]+A[j+1],A[i]+A[j]+A[length-1]);
-				continue;
+	long long total = 0;
+	int minBound = length-1, maxBound = length-1;
+	for(int i = 0; i<=length-3; i++){
+		minBound = length-1; maxBound = length-1;
+		//printf("i:%d\n",i);
+		for(int j = i+1; j<=length-2; j++){
+			if( minBound>j && maxBound>j ){
+				MoveIndexLow(A,i,j,minBound,length-1,min);
+				MoveIndexHigh(A,i,j,maxBound,length-1,max);
+				if( minBound>j && maxBound>j && indexRight(A,i,j,minBound,maxBound,min,max) )//若两个index都大于j且满足条件
+					total += maxBound-minBound+1;
+				else if( minBound<=j && maxBound>j && (A[i]+A[j]+A[maxBound] <= max) )
+					total += maxBound-j;
+				else 
+					continue;//跳至下一个循环
 			}
-			//printf("i:%d j:%d ",i,j);
-			k1 = bioSearch(A, j+1, length, min-A[i]-A[j]);
-			k2 = bioSearch(A, j+1, length, max-A[i]-A[j]);
-			k1 = (A[k1] == min-A[i]-A[j]) ? k1 : k1+1;
-			if( k1 <= j ) k1 = j+1;
-			//printf("k1:%d k2:%d \n",k1,k2);
-			if(k1 == length-1){
-				if( A[k1]+A[i]+A[j] == min )total++;
-				continue;
+			
+			else if( minBound<=j && maxBound>j ){
+				MoveIndexHigh(A,i,j,maxBound,length-1,max);
+				if( maxBound>j ){ 
+					if( A[i]+A[j]+A[maxBound] <= max )
+						total += maxBound-j;
+				}
+				else continue;
 			}
-
-			if( k2 >= k1 ) total += (k2-k1+1);
-			else total+=0;
+			else continue;
 		}
-
 	}
-	printf("%d\n",total);
-	*/
-	int x = -5;
-	//while(x<10){printf("%d \n", bioSearch(A,0,length,x++));}
+	printf("%lld\n",total);
 	getchar();
-	getchar();
+	delete[] A;
 	getchar();
 	return 0;
 }
-
-
+/*
+6 10 13
+1
+2
+3
+4
+5
+6
+*/
